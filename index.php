@@ -55,7 +55,7 @@
                         <?php
                             
                             $blogpost_obj1 = new blogpost();
-                            $result = $blogpost_obj1->read();
+                            $result = $blogpost_obj1->readAll();
 
                             if($result->num_rows > 0){
                 

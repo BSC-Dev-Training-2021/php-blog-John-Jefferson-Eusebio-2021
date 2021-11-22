@@ -2,6 +2,7 @@
     session_start();
     include 'model/model.class.php';
     include 'model/blogpost.class.php';
+    include 'model/blog_post_comment.class.php';
     //require_once 'components/index.component.php';
     
 ?>
@@ -32,7 +33,7 @@
                         <li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
-                        <li class="nav-item"><a class="nav-link" href="post.php">Post</a></li>
+                        <li class="nav-item"><a class="nav-link" href="post.html">Post</a></li>
                         <li class="nav-item"><a class="nav-link" href="messages.html"><i class="fa fa-envelope-o"></i></a></li>
                     </ul>
                 </div>
@@ -42,17 +43,69 @@
         <div class="container mt-5">
             <div class="row">
                 <div class="col-lg-8">
-                    <!-- Post content-->
-                    <?php
+                <?php
                         $blogpost_article = new blogpost();
                         $result= $blogpost_article->findbyid($_GET['article_id']);
                         if($result->num_rows > 0){
     
                             while ($row = $result->fetch_assoc()) {
-                                articelComponent($row['title'], $row['content'], $row['created']);
+                                articelComponent($row['title'], $row['content'], $row['created'], $row['id'] );
                             }
                         }
                     ?>
+                    <!-- Comments section-->
+                    <section class="mb-5">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <!-- Comment form-->
+                                <form method="post" class="mb-4">
+                                    <div>
+                                        <textarea class="form-control mb-2" name="comments" rows="3" placeholder="Join the discussion and leave a comment!"></textarea>
+                                    </div>
+                                    <div>
+                                        <button type="submit" name="submitcomment" class="btn btn-primary">Post Comment</button>
+                                    </div>
+                                </form>
+                                <?php
+                                             if(isset($_POST['submitcomment'])){
+                                                $comments = $_POST['comments'];
+                                                $blog_post_id = $_GET['article_id'];
+
+                                               
+                                                $fields = [
+                                                    'comment' => $comments,
+                                                    'blog_post_id' => $blog_post_id  
+                                                ];
+                                                $blogpostcomment_obj = new blog_post_comments();
+                                                $blogpostcomment_obj->create($fields);
+                                            }    
+                                        ?>
+
+                                    <div class="d-flex mb-4">
+                                            <!-- Parent comment-->
+                                            <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                            <div class="ms-3">
+                                            
+                                            <?php
+                                            $blogpostreadById_obj = new blog_post_comments();
+                                            $findCommentsById = array(
+                                                'blog_post_id' => $_GET['article_id']
+                                                );
+                                                $result = $blogpostreadById_obj->findbyid($findCommentsById);
+                                            foreach($result as $values){?>
+                                                <div class="fw-bold">Commenter Name</div>
+                                               <?php echo $values['comment'];
+                                                }
+                                            ?>
+                             
+                                            </div>
+                                            
+                                    </div>
+                               
+                        
+                            </div>
+                        </div>
+                    </section>
                 </div>
                 <!-- Side widgets-->
                 <div class="col-lg-4">

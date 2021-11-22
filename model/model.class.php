@@ -30,12 +30,11 @@
             $this->conn->query($query);
             $lastid = $this->conn->insert_id;
             return $lastid;
-            echo "<script>alert('Blog Added Succesfully!')</script>";
-            echo "<script>window.location='post.php'</script>";
+           
         }
         
         //read all data
-        public function read(){
+        public function readAll(){
             
             $query = "SELECT * FROM " . $this->table;
 
@@ -45,13 +44,24 @@
         //find by id
         public function findbyid($id){
            
+            if(is_array($id)){
+                
+                foreach($id as $key => $value){
+                    $dataColumnKeys = $key;
+                    $dataColumnValues = $value;
+                }
+                $query = "SELECT * FROM $this->table WHERE $dataColumnKeys = $dataColumnValues";
+                $result = $this->conn->query($query);
+                return $result;
+            }
+
                 if (isset($id)) {
                     $article_id = $id;
                     $query = "SELECT * FROM " . $this->table . " WHERE id='". $id . "'";
                     $result = $this->conn->query($query);
                     return $result;
                 }
-        }
+            }
 
         
 
