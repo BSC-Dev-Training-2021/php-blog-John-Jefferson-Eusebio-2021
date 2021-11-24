@@ -1,5 +1,5 @@
 <?php
-    require_once 'components/index.component.php';
+    
     class model {
         var $servername = "Localhost";
         var $username = "root";
@@ -30,12 +30,11 @@
             $this->conn->query($query);
             $lastid = $this->conn->insert_id;
             return $lastid;
-            echo "<script>alert('Blog Added Succesfully!')</script>";
-            echo "<script>window.location='post.php'</script>";
+           
         }
         
         //read all data
-        public function read(){
+        public function readAll(){
             
             $query = "SELECT * FROM " . $this->table;
 
@@ -43,16 +42,36 @@
             return $result;
         }
         //find by id
-        public function findbyid($id){
+        public function findById($id){
            
-                if (isset($id)) {
-                    $article_id = $id;
-                    $query = "SELECT * FROM " . $this->table . " WHERE id='". $id . "'";
-                    $result = $this->conn->query($query);
-                    return $result;
+            if(is_array($id)){
+                
+                foreach($id as $key => $value){
+                    $dataColumnKeys = $key;
+                    $dataColumnValues = $value;
                 }
+                $result = $this->conn->query("SELECT * FROM $this->table WHERE $dataColumnKeys = $dataColumnValues");
+                return $result;
+            }else{
+                    $results = $this->conn->query("SELECT * FROM  $this->table  WHERE id= $id ");
+                    foreach ($results as $value) {
+                        $arrRes = $value;
+                    }
+                    return $arrRes;
+                    
+                }
+            
         }
 
-        
+        public function filtering(){
+
+            $result = $this->conn-query("SELECT DISTINCT * FROM blog_post bp
+            INNER JOIN blog_post_categories bpc ON bpc.blog_post_id = bp.id
+            INNER JOIN blog_post_comment bc ON bc.blog_post_id = bpc.blog_post_id
+            INNER JOIN category_types ct ON bpc.category_id = ct.id 
+            ");
+            return $result;
+           
+        }
 
     }
