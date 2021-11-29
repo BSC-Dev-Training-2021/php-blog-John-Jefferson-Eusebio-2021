@@ -77,7 +77,7 @@
                                         <div class="row">
                                             <div class="col-lg-6">
                                             <?php
-                                                    $category_obj = new category();
+                                                    $category_obj = new blogpost_category();
                                                     $result = $category_obj -> readAll();
                                                     foreach($result as $categories){?>
                                                     <div class="form-check">
@@ -111,8 +111,6 @@
                                         ];
                                         $blogpost_obj = new blogpost();
                                         $lastIdResult = $blogpost_obj->insertDataBlog($fields, $_POST['categories']);
-                                        echo "<script>alert('Blog Added Succesfully!')</script>";
-                                        echo "<script>window.location='post.php'</script>";
                                     }
                                   
                                 ?>

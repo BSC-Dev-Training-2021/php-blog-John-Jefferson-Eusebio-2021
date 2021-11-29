@@ -3,7 +3,9 @@
     include 'model/model.class.php';
     include 'model/blogpost.class.php';
     include 'model/blog_post_comment.class.php';
-    //require_once 'components/index.component.php';
+    include 'model/categories.class.php';
+    include 'model/category.class.php';
+    
     
 ?>
 <!DOCTYPE html>
@@ -33,7 +35,7 @@
                         <li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
-                        <li class="nav-item"><a class="nav-link" href="post.html">Post</a></li>
+                        <li class="nav-item"><a class="nav-link" href="post.php">Post</a></li>
                         <li class="nav-item"><a class="nav-link" href="messages.html"><i class="fa fa-envelope-o"></i></a></li>
                     </ul>
                 </div>
@@ -43,16 +45,60 @@
         <div class="container mt-5">
             <div class="row">
                 <div class="col-lg-8">
-                <?php
+
+                    <?php
+                       
                         $blogpost_article = new blogpost();
-                        $result= $blogpost_article->findbyid($_GET['article_id']);
-                        if($result->num_rows > 0){
-    
-                            while ($row = $result->fetch_assoc()) {
-                                articelComponent($row['title'], $row['content'], $row['created'], $row['id'] );
-                            }
-                        }
+                        $result[]= $blogpost_article->findById($_GET['article_id']);
+                        foreach ($result as $value1) {
+                            
+                     }   
                     ?>
+                    <article>
+                    <!-- Post header-->
+                    <header class="mb-4">
+                        <!-- Post title-->
+                        <h1 class="fw-bolder mb-1"><?php echo $value1['title'];?></h1>
+                        <!-- Post meta content-->
+                        <div class="text-muted fst-italic mb-2">Posted on 
+                        <?php 
+                        echo date('M d D, Y  H : i : s',strtotime($value1['created']));
+                                
+                        ?> by Start Bootstrap</div>
+                        <!-- Post categories-->
+                
+                        <?php
+                        $arrResult=[];
+                        $catIdsArr = array(
+                            'blog_post_id' => $_GET['article_id']
+                        );
+                        $blogpost_categories = new blogpost_categories();
+                        $getCatIds = $blogpost_categories->findById($catIdsArr);
+                        $blogpost_category_type = new blogpost_category();
+
+                        foreach ($getCatIds as $value) { 
+                        $arrResult[] = $blogpost_category_type->findById($value['category_id']);
+                       }
+                       
+                        foreach ($arrResult as $value) {?>
+
+                          <a class="badge bg-secondary text-decoration-none link-light" href="#!"> <?php echo $value['name']; ?> </a>
+
+                       <?php}?>
+                    
+                    <?php }?>   
+
+
+                    </header>
+                    <!-- Preview image figure-->
+                    <figure class="mb-4\"><img class="img-fluid rounded" src="https://dummyimage.com/900x400/ced4da/6c757d.jpg" alt="..." /></figure>
+                    <!-- Post content-->
+                    <section class="mb-5">
+                        <p class="fs-5 mb-4"><?php echo $value1['content'];?></p>
+                    </section>
+                 
+
+                </article>
                     <!-- Comments section-->
                     <section class="mb-5">
                         <div class="card bg-light">

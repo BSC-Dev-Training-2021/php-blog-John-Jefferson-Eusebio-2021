@@ -1,5 +1,5 @@
 <?php
-    require_once 'components/index.component.php';
+    
     class model {
         var $servername = "Localhost";
         var $username = "root";
@@ -42,7 +42,7 @@
             return $result;
         }
         //find by id
-        public function findbyid($id){
+        public function findById($id){
            
             if(is_array($id)){
                 
@@ -50,19 +50,26 @@
                     $dataColumnKeys = $key;
                     $dataColumnValues = $value;
                 }
-                $query = "SELECT * FROM $this->table WHERE $dataColumnKeys = $dataColumnValues";
-                $result = $this->conn->query($query);
+                $result = $this->conn->query("SELECT * FROM $this->table WHERE $dataColumnKeys = $dataColumnValues");
                 return $result;
-            }
-
-                if (isset($id)) {
-                    $article_id = $id;
-                    $query = "SELECT * FROM " . $this->table . " WHERE id='". $id . "'";
-                    $result = $this->conn->query($query);
-                    return $result;
+            }else{
+                    $results = $this->conn->query("SELECT * FROM  $this->table  WHERE id= $id ");
+                    foreach ($results as $value) {
+                        $arrRes = $value;
+                    }
+                    return $arrRes;
+                    
                 }
-            }
+            
+        }
 
-        
+        public function filtering($catName){
+            $result = $this->conn->query("SELECT bp.id, bp.title, bp.content, bp.description, bp.created FROM blog_post bp
+            INNER JOIN blog_post_categories bpc ON bpc.blog_post_id = bp.id
+            INNER JOIN category_types ct ON ct.id = bpc.category_id
+            where ct.name = '$catName'");
 
+            return $result;
+            
+        }
     }

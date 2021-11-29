@@ -6,9 +6,11 @@
             parent::__construct("blog_post");
         }
         function insertDataBlog($data, $category_data){
+            var_dump($category_data);
             $lastIdResult = $this->create($data);
-            $categories = new categories();
-            $categories->getdata($lastIdResult, $category_data);
+            $categories = new blogpost_categories();
+            $categories->insertCategories($lastIdResult, $category_data);
+            
         }
 
     }
